@@ -260,86 +260,12 @@ export default class MantouAIPlugin extends Plugin {
 			editorCallback: (editor: Editor) => operation_on_selection(
 				editor, 
 				META_ROLE,
-				'作为英文学术论文写作专家，对用户给出的学术文章段落进行翻译为英文，提高语法、清晰度和整体可读性，尽量使用被动语态，更像美国native writer一些，写作风格尽量精简，提高文章的学术性。以下是需要翻译的学术论文节选:',
+				'作为经验丰富的翻译，需要将内容翻译成英文，邀请用简单的单词、帮忙纠正错误的单词、纠正大小写拼写、翻译的结果要亲切、口语化。请只按选择的内容进行翻译，不要自己往里面加内容。输出时只输出翻译结果。 以下是需要翻译的内容:',
 				'', this.settings.api_key)
 		}
 		)
 
-		// TODO: 中译英
-		this.addCommand({
-			id: "question_for_mantou",
-			name: "🐶向馒头提问",
-			editorCallback: (editor: Editor) => {
-				let editorView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				let role = META_ROLE
 
-				if (!editorView) {
-					return
-				}else{
-					const markdownText = editor.getValue();
-					let temp_role = extractRoleValue(markdownText)
-					if(temp_role.length != 0){
-						role = temp_role
-					} 
-				}
-				
-				operation_on_selection(
-				editor, 
-				role,
-				'',
-				'', this.settings.api_key,
-				(x:string)=> {
-					x = x.replace( /\[/gi, "$$$").replace( /\]/gi, "$$$").replace( /\(/gi, "$").replace( /\)/gi, "$").replace("\$", "$");  
-					x = addGreaterThanSign(x)
-					x = x
-					return x
-				},
-				(x:string)=>{
-					x = `> [!NOTE] ${x}`
-					return x
-				});
-			}
-		}
-		)
-
-		this.addCommand({
-			id: "summarize_general",
-			name: "🐶要点归纳",
-			editorCallback: (editor: Editor) => operation_on_selection(
-				editor, 
-				META_ROLE,
-				'以Markdown要点的形式总结以下内容：',
-				'', this.settings.api_key)
-		}
-		)
-
-		// TODO: 摘要
-		this.addCommand({
-			id: "summarize_ppt",
-			name: "🐶段落精读（PPT）",
-			editorCallback: (editor: Editor) => operation_on_selection(
-				editor, 
-				META_ROLE,
-				'对以下内容进行总结归纳，从中提取关键论点，并明确、具体地提取对应的支撑论据（包括实验数据、相关文献、理论结果等）:',
-				`\n以Markdown格式输出
-				## 关键论点1: [论点表述]
-				- [支撑论据1]
-				- [支撑论据2]
-				- [支撑论据3]  
-				- ...
-														
-				---
-																						
-				## 关键论点2:[论点表述]
-				- [支撑论据1]
-				- [支撑论据2]
-				- [支撑论据3]  
-				- ...
-														
-				---
-				...`, this.settings.api_key)
-		}
-		)
 
 		// TODO: 英文润色
 		this.addCommand({
